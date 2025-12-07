@@ -5,122 +5,145 @@ chapter: false
 pre: " <b> 3.3. </b> "
 ---
 
-{{% notice warning %}}
-⚠️ **Lưu ý:** Các thông tin dưới đây chỉ nhằm mục đích tham khảo, vui lòng **không sao chép nguyên văn** cho bài báo cáo của bạn kể cả warning này.
-{{% /notice %}}
+# Xây dựng mạng chăm sóc sức khỏe Resilient với AWS Cloud WAN và SD-WAN
 
-# Bắt đầu với healthcare data lakes: Sử dụng microservices
+Trong lĩnh vực Bán lẻ và Chăm sóc Sức khỏe, yêu cầu kết nối mạng ổn định và độ sẵn sàng cao là vô cùng quan trọng để phục vụ khách hàng và duy trì hoạt động liên tục. Các tổ chức trong lĩnh vực này thường phải kết nối mạng doanh nghiệp với cửa hàng, trung tâm liên lạc, trung tâm phân phối—hoặc trong trường hợp của Best Buy Health: **các Trung tâm Chăm sóc Khách hàng (Care Centers)**.
 
-Các data lake có thể giúp các bệnh viện và cơ sở y tế chuyển dữ liệu thành những thông tin chi tiết về doanh nghiệp và duy trì hoạt động kinh doanh liên tục, đồng thời bảo vệ quyền riêng tư của bệnh nhân. **Data lake** là một kho lưu trữ tập trung, được quản lý và bảo mật để lưu trữ tất cả dữ liệu của bạn, cả ở dạng ban đầu và đã xử lý để phân tích. data lake cho phép bạn chia nhỏ các kho chứa dữ liệu và kết hợp các loại phân tích khác nhau để có được thông tin chi tiết và đưa ra các quyết định kinh doanh tốt hơn.
-
-Bài đăng trên blog này là một phần của loạt bài lớn hơn về việc bắt đầu cài đặt data lake dành cho lĩnh vực y tế. Trong bài đăng blog cuối cùng của tôi trong loạt bài, *“Bắt đầu với data lake dành cho lĩnh vực y tế: Đào sâu vào Amazon Cognito”*, tôi tập trung vào các chi tiết cụ thể của việc sử dụng Amazon Cognito và Attribute Based Access Control (ABAC) để xác thực và ủy quyền người dùng trong giải pháp data lake y tế. Trong blog này, tôi trình bày chi tiết cách giải pháp đã phát triển ở cấp độ cơ bản, bao gồm các quyết định thiết kế mà tôi đã đưa ra và các tính năng bổ sung được sử dụng. Bạn có thể truy cập các code samples cho giải pháp tại Git repo này để tham khảo.
+Best Buy Health cung cấp các giải pháp chăm sóc sức khỏe tại nhà, thiết bị công nghệ thân thiện với người lớn tuổi, cùng đội ngũ nhân viên hỗ trợ chuyên nghiệp cho các nhu cầu kỹ thuật, khẩn cấp và xã hội. Bài viết này mô tả giải pháp kỹ thuật mà Best Buy Health sử dụng để tích hợp **Fortinet FortiGate SD-WAN** vào **Amazon VPC** thông qua **AWS Cloud WAN**. Cách tiếp cận “transitive” này cho phép Best Buy Health **hợp nhất thiết kế mạng và mô hình vận hành** giữa các chi nhánh và hệ thống chạy trên AWS.
 
 ---
 
-## Hướng dẫn kiến trúc
+## Tổng quan kiến trúc
 
-Thay đổi chính kể từ lần trình bày cuối cùng của kiến trúc tổng thể là việc tách dịch vụ đơn lẻ thành một tập hợp các dịch vụ nhỏ để cải thiện khả năng bảo trì và tính linh hoạt. Việc tích hợp một lượng lớn dữ liệu y tế khác nhau thường yêu cầu các trình kết nối chuyên biệt cho từng định dạng; bằng cách giữ chúng được đóng gói riêng biệt với microservices, chúng ta có thể thêm, xóa và sửa đổi từng trình kết nối mà không ảnh hưởng đến những kết nối khác. Các microservices được kết nối rời thông qua tin nhắn publish/subscribe tập trung trong cái mà tôi gọi là “pub/sub hub”.
+Best Buy Health sử dụng mô hình **hub-and-spoke** để kết nối nhiều Care Center với các workload chạy trên AWS. Kiến trúc của họ bao gồm:
 
-Giải pháp này đại diện cho những gì tôi sẽ coi là một lần lặp nước rút hợp lý khác từ last post của tôi. Phạm vi vẫn được giới hạn trong việc nhập và phân tích cú pháp đơn giản của các **HL7v2 messages** được định dạng theo **Quy tắc mã hóa 7 (ER7)** thông qua giao diện REST.
+- **AWS Cloud WAN** làm lớp điều phối mạng toàn cầu  
+- **SD-WAN (Fortinet FortiGate)** để kết nối bảo mật và tối ưu hóa từ các chi nhánh  
+- **Transit Gateway (TGW)** làm trung tâm kết nối trong từng AWS Region  
+- **Các đường hầm Site-to-Site VPN** giữa thiết bị SD-WAN và AWS  
+- **Các thiết bị dự phòng** để tăng độ sẵn sàng  
 
-**Kiến trúc giải pháp bây giờ như sau:**
+Thiết kế này giúp Best Buy Health:
 
-> *Hình 1. Kiến trúc tổng thể; những ô màu thể hiện những dịch vụ riêng biệt.*
-
----
-
-Mặc dù thuật ngữ *microservices* có một số sự mơ hồ cố hữu, một số đặc điểm là chung:  
-- Chúng nhỏ, tự chủ, kết hợp rời rạc  
-- Có thể tái sử dụng, giao tiếp thông qua giao diện được xác định rõ  
-- Chuyên biệt để giải quyết một việc  
-- Thường được triển khai trong **event-driven architecture**
-
-Khi xác định vị trí tạo ranh giới giữa các microservices, cần cân nhắc:  
-- **Nội tại**: công nghệ được sử dụng, hiệu suất, độ tin cậy, khả năng mở rộng  
-- **Bên ngoài**: chức năng phụ thuộc, tần suất thay đổi, khả năng tái sử dụng  
-- **Con người**: quyền sở hữu nhóm, quản lý *cognitive load*
+- Đơn giản hóa vận hành  
+- Giảm nhu cầu cấu hình thủ công  
+- Cải thiện hiệu năng kết nối giữa các Care Center và workload AWS  
 
 ---
 
-## Lựa chọn công nghệ và phạm vi giao tiếp
+## Các thành phần chính của kiến trúc
 
-| Phạm vi giao tiếp                        | Các công nghệ / mô hình cần xem xét                                                        |
-| ---------------------------------------- | ------------------------------------------------------------------------------------------ |
-| Trong một microservice                   | Amazon Simple Queue Service (Amazon SQS), AWS Step Functions                               |
-| Giữa các microservices trong một dịch vụ | AWS CloudFormation cross-stack references, Amazon Simple Notification Service (Amazon SNS) |
-| Giữa các dịch vụ                         | Amazon EventBridge, AWS Cloud Map, Amazon API Gateway                                      |
+### **1. Mạng lõi AWS Cloud WAN**
 
----
+Đây là mạng lõi toàn cầu giúp quản lý:
 
-## The pub/sub hub
+- Định tuyến  
+- Kết nối liên vùng  
+- Chính sách mạng  
 
-Việc sử dụng kiến trúc **hub-and-spoke** (hay message broker) hoạt động tốt với một số lượng nhỏ các microservices liên quan chặt chẽ.  
-- Mỗi microservice chỉ phụ thuộc vào *hub*  
-- Kết nối giữa các microservice chỉ giới hạn ở nội dung của message được xuất  
-- Giảm số lượng synchronous calls vì pub/sub là *push* không đồng bộ một chiều
-
-Nhược điểm: cần **phối hợp và giám sát** để tránh microservice xử lý nhầm message.
+Cloud WAN kết nối các Region, TGW và SD-WAN Appliances thông qua Cloud WAN Attachments.
 
 ---
 
-## Core microservice
+### **2. SD-WAN Management VPC**
 
-Cung cấp dữ liệu nền tảng và lớp truyền thông, gồm:  
-- **Amazon S3** bucket cho dữ liệu  
-- **Amazon DynamoDB** cho danh mục dữ liệu  
-- **AWS Lambda** để ghi message vào data lake và danh mục  
-- **Amazon SNS** topic làm *hub*  
-- **Amazon S3** bucket cho artifacts như mã Lambda
+VPC này chứa hai thiết bị FortiGate hoạt động theo mô hình dự phòng:
 
-> Chỉ cho phép truy cập ghi gián tiếp vào data lake qua hàm Lambda → đảm bảo nhất quán.
+- Một thiết bị dùng cho **quản lý**  
+- Một thiết bị dùng cho **VPN và SD-WAN termination**
 
----
+VPC này hỗ trợ:
 
-## Front door microservice
-
-- Cung cấp API Gateway để tương tác REST bên ngoài  
-- Xác thực & ủy quyền dựa trên **OIDC** thông qua **Amazon Cognito**  
-- Cơ chế *deduplication* tự quản lý bằng DynamoDB thay vì SNS FIFO vì:
-  1. SNS deduplication TTL chỉ 5 phút
-  2. SNS FIFO yêu cầu SQS FIFO
-  3. Chủ động báo cho sender biết message là bản sao
+- Thiết lập đường hầm IPSec  
+- Routing động (BGP over IPSec)  
+- Chính sách egress chung  
 
 ---
 
-## Staging ER7 microservice
+### **3. Transit Gateway (TGW)**
 
-- Lambda “trigger” đăng ký với pub/sub hub, lọc message theo attribute  
-- Step Functions Express Workflow để chuyển ER7 → JSON  
-- Hai Lambda:
-  1. Sửa format ER7 (newline, carriage return)
-  2. Parsing logic  
-- Kết quả hoặc lỗi được đẩy lại vào pub/sub hub
+Transit Gateway đóng vai trò **trung tâm kết nối trong Region**, liên kết:
+
+- SD-WAN VPC  
+- Application VPC  
+- Shared Services VPC  
+- Các VPC khác trong cùng Region  
 
 ---
 
-## Tính năng mới trong giải pháp
+### **4. Các Care Center (Chi nhánh)**
 
-### 1. AWS CloudFormation cross-stack references
-Ví dụ *outputs* trong core microservice:
-```yaml
-Outputs:
-  Bucket:
-    Value: !Ref Bucket
-    Export:
-      Name: !Sub ${AWS::StackName}-Bucket
-  ArtifactBucket:
-    Value: !Ref ArtifactBucket
-    Export:
-      Name: !Sub ${AWS::StackName}-ArtifactBucket
-  Topic:
-    Value: !Ref Topic
-    Export:
-      Name: !Sub ${AWS::StackName}-Topic
-  Catalog:
-    Value: !Ref Catalog
-    Export:
-      Name: !Sub ${AWS::StackName}-Catalog
-  CatalogArn:
-    Value: !GetAtt Catalog.Arn
-    Export:
-      Name: !Sub ${AWS::StackName}-CatalogArn
+Mỗi Care Center sử dụng thiết bị **FortiGate SD-WAN** đặt tại chi nhánh.
+
+Thiết bị này thiết lập:
+
+- Hai đường hầm VPN dự phòng đến AWS  
+- Tự động định tuyến và chuyển hướng khi có sự cố  
+- Kiểm soát lưu lượng thông minh (Application Aware Routing)  
+
+---
+
+## Luồng xử lý mạng
+
+1. Thiết bị SD-WAN tại Care Center thiết lập **hai đường hầm IPSec** đến FortiGate trong AWS  
+2. FortiGate kết nối vào **Transit Gateway**  
+3. Transit Gateway điều phối lưu lượng đến các Application VPC  
+4. Cloud WAN quản lý và điều phối định tuyến giữa các Region  
+
+Tất cả định tuyến được quản lý **tập trung**, hạn chế tối đa cấu hình thủ công ở chi nhánh.
+
+---
+
+## Lý do Best Buy Health chọn mô hình này
+
+###  **1. Đơn giản hóa vận hành**
+Cloud WAN giúp:
+
+- Trung tâm hóa cấu hình mạng  
+- Dễ dàng áp dụng chính sách toàn hệ thống  
+- Giảm xử lý thủ công tại chi nhánh  
+
+---
+
+###  **2. Tăng khả năng phục hồi (Resilience)**
+
+Nhiều lớp dự phòng:
+
+- SD-WAN Appliances  
+- IPSec tunnels  
+- Transit Gateway  
+- Kết nối liên vùng  
+
+Cho phép hệ thống duy trì hoạt động ngay cả khi một thành phần gặp sự cố.
+
+---
+
+###  **3. Tăng cường bảo mật**
+Fortinet SD-WAN cung cấp:
+
+- Kiểm soát truy cập  
+- Chính sách tường lửa thống nhất  
+- Mã hóa end-to-end  
+
+---
+
+### **4. Mở rộng linh hoạt**
+Dễ dàng thêm Care Center mới chỉ bằng:
+
+- Plug-and-play thiết bị SD-WAN  
+- Tự động thiết lập tunnel  
+- Tự động áp dụng chính sách Cloud WAN  
+
+---
+
+## Kết luận
+
+Giải pháp kết hợp giữa **AWS Cloud WAN** và **Fortinet SD-WAN** cho phép Best Buy Health xây dựng một **mạng lưới chăm sóc sức khỏe resilient, bảo mật, hiệu quả**.
+
+Mô hình này giúp họ:
+
+- Giảm chi phí vận hành  
+- Đơn giản hóa quản lý mạng tại scale lớn  
+- Cải thiện hiệu năng kết nối  
+- Tăng độ tin cậy cho các dịch vụ chăm sóc sức khỏe quan trọng  
+

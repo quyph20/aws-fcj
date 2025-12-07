@@ -1,125 +1,210 @@
 ---
-title: "Event 1"
+title: "Event 4"
 weight: 1
 chapter: false
-pre: " <b> 4.1. </b> "
+pre: " <b> 4.4. </b> "
 ---
 
-{{% notice warning %}}
-⚠️ **Note:** The information below is for reference purposes only. Please **do not copy it verbatim** into your report, including this warning.
-{{% /notice %}}
 
-# Summary Report: “GenAI-powered App-DB Modernization workshop”
+# "AWS Well-Architected Framework Workshop"
 
-### Event Objectives
+**Date & Time:** Saturday, November 29, 2025 (8:30 AM – 12:00 PM)  
+**Location:** FCJ Learning Center, Ho Chi Minh City  
+**Role:** Workshop Participant  
+**Organizer:** First Cloud Journey, AWS User Group Vietnam
 
-- Share best practices in modern application design
-- Introduce Domain-Driven Design (DDD) and event-driven architecture
-- Provide guidance on selecting the right compute services
-- Present AI tools to support the development lifecycle
+### Event Purpose
 
-### Speakers
+This workshop provided comprehensive overview of the AWS Well-Architected Framework, focusing on the five pillars: Operational Excellence, Security, Reliability, Performance Efficiency, and Cost Optimization. The session helped participants understand how to design and evaluate cloud architectures using AWS best practices.
 
-- **Jignesh Shah** – Director, Open Source Databases
-- **Erica Liu** – Sr. GTM Specialist, AppMod
-- **Fabrianne Effendi** – Assc. Specialist SA, Serverless Amazon Web Services
+### Agenda Overview
+
+**8:30 – 8:50 AM | Introduction & Framework Overview**
+- Welcome and workshop objectives
+- Introduction to Well-Architected Framework
+- Overview of the five pillars
+- Benefits of using the framework
+
+**8:50 – 9:30 AM | Operational Excellence Pillar**
+
+**Key Concepts:**
+- Infrastructure as Code (IaC) with CloudFormation and CDK
+- Continuous improvement and experimentation
+- Learning from operational events
+- Monitoring and observability
+
+**Best Practices:**
+- Automate deployment processes
+- Make frequent, small, reversible changes
+- Anticipate failure scenarios
+- Document standard operating procedures
+
+**9:30 – 10:00 AM | Security Pillar**
+
+**Security Fundamentals:**
+- Identity and Access Management (IAM)
+- Detection and response mechanisms
+- Data protection strategies
+- Incident response planning
+
+**Key Services:**
+- AWS IAM, Security Hub, GuardDuty
+- AWS KMS for encryption
+- CloudTrail for auditing
+- AWS Config for compliance
+
+**10:00 – 10:15 AM | Coffee Break**
+
+**10:15 – 10:45 AM | Reliability Pillar**
+
+**Reliability Concepts:**
+- High availability architecture patterns
+- Fault tolerance and disaster recovery
+- Auto Scaling and load balancing
+- Backup and restore strategies
+
+**Implementation:**
+- Multi-AZ deployments
+- Cross-region replication
+- Health checks and monitoring
+- Automated recovery procedures
+
+**10:45 – 11:15 AM | Performance Efficiency Pillar**
+
+**Performance Optimization:**
+- Right-sizing resources
+- Choosing appropriate services
+- Monitoring performance metrics
+- Using caching strategies
+
+**AWS Services:**
+- Amazon CloudFront for content delivery
+- ElastiCache for caching
+- Lambda for serverless computing
+- Auto Scaling for dynamic workloads
+
+**11:15 – 11:45 AM | Cost Optimization Pillar**
+
+**Cost Management:**
+- Understanding AWS pricing models
+- Right-sizing and instance selection
+- Using reserved instances and savings plans
+- Monitoring and controlling costs
+
+**Tools and Practices:**
+- AWS Cost Explorer
+- AWS Budgets and alerts
+- Tagging strategies
+- S3 storage class optimization
+
+**11:45 – 12:00 PM | Wrap-up & Q&A**
+- Summary of key takeaways
+- Well-Architected Tool demonstration
+- Resources for further learning
+- Certificate distribution
 
 ### Key Highlights
 
-#### Identifying the drawbacks of legacy application architecture
+- **Holistic Approach:** Framework covers all aspects of cloud architecture
+- **Best Practices:** Based on AWS experience with thousands of customers
+- **Trade-offs:** Understanding when to prioritize one pillar over another
+- **Continuous Improvement:** Regular reviews and updates are essential
+- **Well-Architected Tool:** Free tool to evaluate your architectures
 
-- Long product release cycles → Lost revenue/missed opportunities  
-- Inefficient operations → Reduced productivity, higher costs  
-- Non-compliance with security regulations → Security breaches, loss of reputation  
+### Key Learnings
 
-#### Transitioning to modern application architecture – Microservices
+**Framework Application:**
+- The five pillars are interconnected and should be considered together
+- Trade-offs are inevitable - understanding them is key
+- Regular architecture reviews help identify improvement opportunities
+- The framework applies to workloads of all sizes
 
-Migrating to a modular system — each function is an **independent service** communicating via **events**, built on three core pillars:
+**Operational Excellence:**
+- Automation reduces human error and increases efficiency
+- Learning from failures improves operations over time
+- Documentation and runbooks are crucial
 
-- **Queue Management**: Handle asynchronous tasks  
-- **Caching Strategy**: Optimize performance  
-- **Message Handling**: Flexible inter-service communication  
+**Security:**
+- Security should be built into every layer
+- Principle of least privilege for access control
+- Continuous monitoring is essential
 
-#### Domain-Driven Design (DDD)
+**Reliability:**
+- Design for failure and nothing fails
+- Testing recovery procedures is as important as having them
+- Distribute workloads across multiple availability zones
 
-- **Four-step method**: Identify domain events → arrange timeline → identify actors → define bounded contexts  
-- **Bookstore case study**: Demonstrates real-world DDD application  
-- **Context mapping**: 7 patterns for integrating bounded contexts  
+**Performance Efficiency:**
+- Monitor and measure to understand performance
+- Choose the right service for the workload
+- Serverless can simplify architecture
 
-#### Event-Driven Architecture
+**Cost Optimization:**
+- Measure and analyze spending regularly
+- Use the right resources for the job
+- Take advantage of AWS pricing models
 
-- **3 integration patterns**: Publish/Subscribe, Point-to-point, Streaming  
-- **Benefits**: Loose coupling, scalability, resilience  
-- **Sync vs async comparison**: Understanding the trade-offs  
+### Application to Internship
 
-#### Compute Evolution
+**Immediate Applications:**
+- Review existing projects using Well-Architected principles
+- Implement IaC for infrastructure deployment
+- Set up cost monitoring and budgets
+- Improve security posture with IAM best practices
 
-- **Shared Responsibility Model**: EC2 → ECS → Fargate → Lambda  
-- **Serverless benefits**: No server management, auto-scaling, pay-for-value  
-- **Functions vs Containers**: Criteria for appropriate choice  
+**Architecture Design:**
+- Apply the framework when designing new solutions
+- Document architectural decisions and trade-offs
+- Consider all five pillars in design discussions
+- Use the Well-Architected Tool for self-assessment
 
-#### Amazon Q Developer
+**Best Practices:**
+- Implement infrastructure as code
+- Enable comprehensive monitoring
+- Set up automated backups
+- Apply proper tagging for cost allocation
 
-- **SDLC automation**: From planning to maintenance  
-- **Code transformation**: Java upgrade, .NET modernization  
-- **AWS Transform agents**: VMware, Mainframe, .NET migration  
+### Personal Experience
 
-### Key Takeaways
+The **AWS Well-Architected Framework Workshop** provided valuable architectural guidance.
 
-#### Design Mindset
+**Understanding the Framework:**
+- Learned that good architecture balances all five pillars
+- Understanding trade-offs helps make better decisions
+- The framework provides structure for architectural discussions
+- Real-world examples made concepts clearer
 
-- **Business-first approach**: Always start from the business domain, not the technology  
-- **Ubiquitous language**: Importance of a shared vocabulary between business and tech teams  
-- **Bounded contexts**: Identifying and managing complexity in large systems  
+**Practical Insights:**
+- Each pillar has specific best practices and design patterns
+- The Well-Architected Tool can help assess current architectures
+- Regular reviews help maintain and improve quality
+- Documentation is crucial for operational success
 
-#### Technical Architecture
+**Multi-Pillar Thinking:**
+- Realized that optimizing for one pillar may impact others
+- Security and cost often require careful balancing
+- Performance improvements may increase costs
+- Understanding these relationships is important
 
-- **Event storming technique**: Practical method for modeling business processes  
-- Use **event-driven communication** instead of synchronous calls  
-- **Integration patterns**: When to use sync, async, pub/sub, streaming  
-- **Compute spectrum**: Criteria for choosing between VM, containers, and serverless  
+**Architecture Review Process:**
+- Learned how to conduct architecture reviews
+- Understanding of key questions for each pillar
+- Importance of documenting decisions
+- Value of continuous improvement
 
-#### Modernization Strategy
+**Tools and Resources:**
+- AWS Well-Architected Tool for assessments
+- Whitepapers and documentation for each pillar
+- Reference architectures and patterns
+- Community resources and workshops
 
-- **Phased approach**: No rushing — follow a clear roadmap  
-- **7Rs framework**: Multiple modernization paths depending on the application  
-- **ROI measurement**: Cost reduction + business agility  
+**Challenges:**
+- Balancing all five pillars can be complex
+- Understanding when to prioritize which pillar
+- Implementing best practices requires time and effort
+- Keeping up with AWS service updates
 
-### Applying to Work
+#### Event Photos
+*Workshop photos will be added here*
 
-- **Apply DDD** to current projects: Event storming sessions with business teams  
-- **Refactor microservices**: Use bounded contexts to define service boundaries  
-- **Implement event-driven patterns**: Replace some sync calls with async messaging  
-- **Adopt serverless**: Pilot AWS Lambda for suitable use cases  
-- **Try Amazon Q Developer**: Integrate into the dev workflow to boost productivity  
-
-### Event Experience
-
-Attending the **“GenAI-powered App-DB Modernization”** workshop was extremely valuable, giving me a comprehensive view of modernizing applications and databases using advanced methods and tools. Key experiences included:
-
-#### Learning from highly skilled speakers
-- Experts from AWS and major tech organizations shared **best practices** in modern application design.  
-- Through real-world case studies, I gained a deeper understanding of applying **DDD** and **Event-Driven Architecture** to large projects.  
-
-#### Hands-on technical exposure
-- Participating in **event storming** sessions helped me visualize how to **model business processes** into domain events.  
-- Learned how to **split microservices** and define **bounded contexts** to manage large-system complexity.  
-- Understood trade-offs between **synchronous and asynchronous communication** and integration patterns like **pub/sub, point-to-point, streaming**.  
-
-#### Leveraging modern tools
-- Explored **Amazon Q Developer**, an AI tool for SDLC support from planning to maintenance.  
-- Learned to **automate code transformation** and pilot serverless with **AWS Lambda** to improve productivity.  
-
-#### Networking and discussions
-- The workshop offered opportunities to exchange ideas with experts, peers, and business teams, enhancing the **ubiquitous language** between business and tech.  
-- Real-world examples reinforced the importance of the **business-first approach** rather than focusing solely on technology.  
-
-#### Lessons learned
-- Applying DDD and event-driven patterns reduces **coupling** while improving **scalability** and **resilience**.  
-- Modernization requires a **phased approach** with **ROI measurement**; rushing the process can be risky.  
-- AI tools like Amazon Q Developer can significantly **boost productivity** when integrated into the current workflow.  
-
-#### Some event photos
-*Add your event photos here*  
-
-> Overall, the event not only provided technical knowledge but also helped me reshape my thinking about application design, system modernization, and cross-team collaboration.
+> Overall, this workshop provided a comprehensive framework for thinking about cloud architecture. The five pillars offer structured approach to designing, building, and maintaining AWS workloads. Understanding these principles will help in making better architectural decisions for future projects.

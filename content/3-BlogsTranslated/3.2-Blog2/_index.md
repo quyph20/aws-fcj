@@ -4,122 +4,149 @@ weight: 1
 chapter: false
 pre: " <b> 3.2. </b> "
 ---
-{{% notice warning %}}
-⚠️ **Note:** The information below is for reference purposes only. Please **do not copy verbatim** for your report, including this warning.
-{{% /notice %}}
 
-# Getting Started with Healthcare Data Lakes: Using Microservices
 
-Data lakes can help hospitals and healthcare facilities turn data into business insights, maintain business continuity, and protect patient privacy. A **data lake** is a centralized, managed, and secure repository to store all your data, both in its raw and processed forms for analysis. Data lakes allow you to break down data silos and combine different types of analytics to gain insights and make better business decisions.
+# How CommBank Made Their CommSec Trading Platform Highly Available and Operationally Resilient
 
-This blog post is part of a larger series on getting started with setting up a healthcare data lake. In my final post of the series, *“Getting Started with Healthcare Data Lakes: Diving into Amazon Cognito”*, I focused on the specifics of using Amazon Cognito and Attribute Based Access Control (ABAC) to authenticate and authorize users in the healthcare data lake solution. In this blog, I detail how the solution evolved at a foundational level, including the design decisions I made and the additional features used. You can access the code samples for the solution in this Git repo for reference.
+CommSec, Australia’s leading online broker and a subsidiary of the Commonwealth Bank of Australia (CommBank), helps millions of customers grow their wealth by making it easy, accessible, and affordable to invest in both Australian and international markets.
 
----
+CommSec provides essential services such as market research, portfolio management, and trade execution. Because customers expect round-the-clock availability, the platform must maintain exceptional reliability. As a regulated entity under ASIC, CommSec must also ensure data sovereignty and platform resilience to protect the integrity of Australia’s financial markets.
 
-## Architecture Guidance
-
-The main change since the last presentation of the overall architecture is the decomposition of a single service into a set of smaller services to improve maintainability and flexibility. Integrating a large volume of diverse healthcare data often requires specialized connectors for each format; by keeping them encapsulated separately as microservices, we can add, remove, and modify each connector without affecting the others. The microservices are loosely coupled via publish/subscribe messaging centered in what I call the “pub/sub hub.”
-
-This solution represents what I would consider another reasonable sprint iteration from my last post. The scope is still limited to the ingestion and basic parsing of **HL7v2 messages** formatted in **Encoding Rules 7 (ER7)** through a REST interface.
-
-**The solution architecture is now as follows:**
-
-> *Figure 1. Overall architecture; colored boxes represent distinct services.*
+This post explores how CommSec used AWS services to build a resilient, high-performing trading platform while meeting strict regulatory requirements and delivering an exceptional customer experience.
 
 ---
 
-While the term *microservices* has some inherent ambiguity, certain traits are common:  
-- Small, autonomous, loosely coupled  
-- Reusable, communicating through well-defined interfaces  
-- Specialized to do one thing well  
-- Often implemented in an **event-driven architecture**
+## Challenges of Operating a Multicloud Environment
 
-When determining where to draw boundaries between microservices, consider:  
-- **Intrinsic**: technology used, performance, reliability, scalability  
-- **Extrinsic**: dependent functionality, rate of change, reusability  
-- **Human**: team ownership, managing *cognitive load*
+CommSec was the first critical workload in CommBank to transition from on-premises data centers to the public cloud.
 
----
+- **2015**: migrated web + mobile tier  
+- **2019**: migrated application tier  
 
-## Technology Choices and Communication Scope
+They initially adopted an **active–active multicloud architecture** (AWS + another cloud) to build resilience confidence.
 
-| Communication scope                       | Technologies / patterns to consider                                                        |
-| ----------------------------------------- | ------------------------------------------------------------------------------------------ |
-| Within a single microservice              | Amazon Simple Queue Service (Amazon SQS), AWS Step Functions                               |
-| Between microservices in a single service | AWS CloudFormation cross-stack references, Amazon Simple Notification Service (Amazon SNS) |
-| Between services                          | Amazon EventBridge, AWS Cloud Map, Amazon API Gateway                                      |
+However, operating multicloud introduced several challenges:
+
+- Two deployment pipelines  
+- Two different operating models  
+- Custom failover requiring external witnesses  
+- Additional operational overhead  
+- Reduced development velocity  
+- Limited ability to use cloud-native services  
+- Innovation slowed due to parity requirements  
 
 ---
 
-## The Pub/Sub Hub
+## Solution Overview
 
-Using a **hub-and-spoke** architecture (or message broker) works well with a small number of tightly related microservices.  
-- Each microservice depends only on the *hub*  
-- Inter-microservice connections are limited to the contents of the published message  
-- Reduces the number of synchronous calls since pub/sub is a one-way asynchronous *push*
+By early **2025**, CommSec rearchitected its app, web, and mobile tiers to run **entirely on AWS**, now that AWS had become CommBank’s preferred cloud provider.
 
-Drawback: **coordination and monitoring** are needed to avoid microservices processing the wrong message.
+They introduced a new fault-isolation boundary:
 
----
+### **➡ Availability Zone (AZ) became the new fault domain**
 
-## Core Microservice
+Using **Amazon Application Recovery Controller (ARC) zonal shift**, CommSec can:
 
-Provides foundational data and communication layer, including:  
-- **Amazon S3** bucket for data  
-- **Amazon DynamoDB** for data catalog  
-- **AWS Lambda** to write messages into the data lake and catalog  
-- **Amazon SNS** topic as the *hub*  
-- **Amazon S3** bucket for artifacts such as Lambda code
+- Fail over away from impaired AZs  
+- Handle infrastructure or application gray failures  
+- Maintain physical + logical isolation across multiple AZs  
 
-> Only allow indirect write access to the data lake through a Lambda function → ensures consistency.
+ARC zonal shift was enabled on their load balancers so they could divert traffic away from impaired AZs **without control plane dependencies**.
 
----
+This simplification allowed them to replicate previous multicloud resilience—**but with far less complexity**.
 
-## Front Door Microservice
+### Key benefits:
 
-- Provides an API Gateway for external REST interaction  
-- Authentication & authorization based on **OIDC** via **Amazon Cognito**  
-- Self-managed *deduplication* mechanism using DynamoDB instead of SNS FIFO because:  
-  1. SNS deduplication TTL is only 5 minutes  
-  2. SNS FIFO requires SQS FIFO  
-  3. Ability to proactively notify the sender that the message is a duplicate  
+- **Out-of-the-box failover** using ARC zonal shift  
+- **Validated playbooks** with regular testing  
+- Deployment + OS patching became **2× faster**  
+- Running across 3 AZs enabled **25% base capacity reduction** compared to the old 4-stack multicloud setup  
+- Lower operational cost  
 
 ---
 
-## Staging ER7 Microservice
+## Resilience Improvements
 
-- Lambda “trigger” subscribed to the pub/sub hub, filtering messages by attribute  
-- Step Functions Express Workflow to convert ER7 → JSON  
-- Two Lambdas:  
-  1. Fix ER7 formatting (newline, carriage return)  
-  2. Parsing logic  
-- Result or error is pushed back into the pub/sub hub  
+### **1. Resilient Scaling**
+Because scale-in/out happens multiple times daily:
+
+- All scale-out bootstrap logic was redesigned to be **self-contained**  
+- Application binaries stored in **Amazon S3 in the same AWS account**  
+→ No external dependencies during scaling  
+
+### **2. Handling Extreme Traffic Spikes**
+
+CommSec traffic **triples within 3 minutes** at market open (9:59–10:02 AM).
+
+To handle this:
+
+- Implemented **Load Balancer Capacity Unit (LCU) reservations**  
+→ Pre-allocates ALB capacity  
+→ Avoids relying on reactive scaling  
+
+### **3. Health Checks for Hard Failures**
+
+- ALB health checks automatically remove unhealthy instances  
+- Alerts notify the ops team for investigation  
+
+### **4. Improved Exchange Connectivity**
+
+- New **AWS Direct Connect** links to the Australian Liquidity Centre (ASX primary systems)  
+- Improves reliability for market operations (ASX & CBOE)  
 
 ---
 
-## New Features in the Solution
+## ARC Zonal Shift to Mitigate Impairments
 
-### 1. AWS CloudFormation Cross-Stack References
-Example *outputs* in the core microservice:
-```yaml
-Outputs:
-  Bucket:
-    Value: !Ref Bucket
-    Export:
-      Name: !Sub ${AWS::StackName}-Bucket
-  ArtifactBucket:
-    Value: !Ref ArtifactBucket
-    Export:
-      Name: !Sub ${AWS::StackName}-ArtifactBucket
-  Topic:
-    Value: !Ref Topic
-    Export:
-      Name: !Sub ${AWS::StackName}-Topic
-  Catalog:
-    Value: !Ref Catalog
-    Export:
-      Name: !Sub ${AWS::StackName}-Catalog
-  CatalogArn:
-    Value: !GetAtt Catalog.Arn
-    Export:
-      Name: !Sub ${AWS::StackName}-CatalogArn
+Launched in 2023, ARC zonal shift enables:
+
+- Shifting traffic away from an impaired Availability Zone  
+- Reducing impact from outages or partial failures  
+- Supporting:
+  - ALB / NLB  
+  - EC2 Auto Scaling Groups  
+  - Amazon EKS  
+
+### How it works:
+
+When CommSec initiates a zonal shift:
+
+1. **Removes the ALB node’s IP** in the affected AZ from DNS  
+   → New client requests avoid that node  
+2. **Remaining ALB nodes stop routing traffic** to targets in the affected AZ  
+   → Prevents routing into impaired workloads  
+
+Cross-zone load balancing remains active in healthy AZs.
+
+When the issue is resolved:
+
+- They cancel the zonal shift  
+- Traffic is restored evenly across all AZs  
+
+---
+
+## Benefits of ARC Zonal Shift
+
+- Helps maintain higher availability SLAs  
+- Eliminates multi-step manual failovers  
+- Minimizes revenue loss during failures  
+- Enables frequent, low-risk resilience testing  
+- Builds organizational confidence in disaster recovery  
+
+> “ARC zonal shift is the most efficient way for CommSec to use AWS services whilst meeting our resilience requirements… Hopefully it’s something we will never need, but our regular resilience testing ensures it’s there and will work if we ever need it.”  
+> — **Henry Zhao, Staff Software Engineer, CommBank**
+
+---
+
+## Conclusion
+
+By consolidating on AWS and using modern Multi-AZ architectural patterns, the CommSec trading platform now delivers:
+
+- Exceptional reliability  
+- Strong regulatory compliance  
+- Enhanced customer experience  
+- Simplified architecture  
+- Reduced operational cost  
+
+ARC zonal shift, optimized load balancer design, Direct Connect improvements, and robust operational playbooks together create a **highly available, operationally resilient trading platform** capable of supporting millions of Australian investors.
+

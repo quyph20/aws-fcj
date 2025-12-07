@@ -4,25 +4,21 @@ weight: 7
 chapter: false
 pre: " <b> 7. </b> "
 ---
-{{% notice warning %}}
-⚠️ **Lưu ý:** Các thông tin dưới đây chỉ nhằm mục đích tham khảo, vui lòng **không sao chép nguyên văn** cho bài báo cáo của bạn kể cả warning này.
-{{% /notice %}}
 
->Tại đây bạn có thể tự do đóng góp ý kiến cá nhân về những trải nghiệm khi tham gia chương trình First Cloud Journey, giúp team FCJ cải thiện những vấn đề còn thiếu sót dựa trên các hạng mục sau:
 
 ### Đánh giá chung
 
 **1. Môi trường làm việc**  
-Môi trường làm việc rất thân thiện và cởi mở. Các thành viên trong FCJ luôn sẵn sàng hỗ trợ khi mình gặp khó khăn, kể cả ngoài giờ làm việc. Không gian làm việc gọn gàng, thoải mái, giúp mình tập trung tốt hơn. Tuy nhiên, mình nghĩ có thể bổ sung thêm một số buổi giao lưu hoặc team bonding để mọi người hiểu nhau hơn.
+Môi trường làm việc tại FCJ vô cùng tích cực. Bầu không khí cởi mở, hỗ trợ và tạo điều kiện rất tốt cho hiệu suất làm việc. Các anh chị trong đội ngũ luôn thân thiện, dễ trao đổi và sẵn sàng giúp đỡ mỗi khi tôi gặp khó khăn — thậm chí cả ngoài giờ làm. Không gian làm việc được sắp xếp ngăn nắp, thoải mái, giúp tôi duy trì sự tập trung và hiệu quả.
 
 **2. Sự hỗ trợ của mentor / team admin**  
-Mentor hướng dẫn rất chi tiết, giải thích rõ ràng khi mình chưa hiểu và luôn khuyến khích mình đặt câu hỏi. Team admin hỗ trợ các thủ tục, tài liệu và tạo điều kiện để mình làm việc thuận lợi. Mình đánh giá cao việc mentor cho phép mình thử và tự xử lý vấn đề thay vì chỉ đưa đáp án.
+Mentor hướng dẫn rất chi tiết, kiên nhẫn và đầy tính định hướng. Khi tôi gặp vấn đề, mentor giải thích rõ ràng, giúp tôi hiểu bản chất thay vì chỉ đưa ra câu trả lời. Tôi đặc biệt trân trọng cách mentor khuyến khích tôi tự tìm cách giải quyết trước khi hỗ trợ.
 
 **3. Sự phù hợp giữa công việc và chuyên ngành học**  
-Công việc mình được giao phù hợp với kiến thức mình đã học ở trường, đồng thời mở rộng thêm những mảng mới mà mình chưa từng được tiếp cận. Nhờ vậy, mình vừa củng cố kiến thức nền tảng, vừa học thêm kỹ năng thực tế.
+Các nhiệm vụ được giao phù hợp chặt chẽ với chuyên ngành mà tôi được học, đồng thời mở rộng sang những lĩnh vực mới mà trước đây tôi chưa từng tiếp cận. Sự kết hợp giữa kiến thức quen thuộc và nội dung mới đã giúp tôi củng cố nền tảng và phát triển thêm nhiều kỹ năng thực tiễn có giá trị.
 
 **4. Cơ hội học hỏi & phát triển kỹ năng**  
-Trong quá trình thực tập, mình học được nhiều kỹ năng mới như sử dụng công cụ quản lý dự án, kỹ năng làm việc nhóm, và cả cách giao tiếp chuyên nghiệp trong môi trường công ty. Mentor cũng chia sẻ nhiều kinh nghiệm thực tế giúp mình định hướng tốt hơn cho sự nghiệp.
+Trong suốt quá trình thực tập, tôi đã có cơ hội rèn luyện nhiều kỹ năng thiết yếu như sử dụng công cụ quản lý dự án, làm việc nhóm và giao tiếp chuyên nghiệp trong môi trường doanh nghiệp. Mentor còn chia sẻ nhiều kinh nghiệm thực tế và định hướng nghề nghiệp, giúp tôi có thêm góc nhìn dài hạn cho con đường chuyên môn của mình.
 
 **5. Văn hóa & tinh thần đồng đội**  
 Văn hóa công ty rất tích cực: mọi người tôn trọng lẫn nhau, làm việc nghiêm túc nhưng vẫn vui vẻ. Khi có dự án gấp, mọi người cùng nhau cố gắng, hỗ trợ không phân biệt vị trí. Điều này giúp mình cảm thấy mình là một phần của tập thể, dù chỉ là thực tập sinh.

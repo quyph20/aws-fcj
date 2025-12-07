@@ -1,5 +1,5 @@
 ---
-title: "Events Participated"
+title: "Events Attended"
 weight: 4
 chapter: false
 pre: " <b> 4. </b> "
@@ -7,57 +7,42 @@ pre: " <b> 4. </b> "
 
 
 
-### [Event 1](4.1-Event1/)  
-&emsp;**Event Name:** AI-Driven Development Workshop – Shaping the Future of Development  
+### [Event 1](4.1-Event1/)
 
-&emsp;**Date & Time:** 14:00 – 16:30, Friday, October 3, 2025
+&emsp;**Event Name:** AI-Driven Development Workshop – Shaping the Future of Development
 
-&emsp;**Location:** 26th Floor, Bitexco Tower, 02 Hai Trieu Street, Saigon Ward, Ho Chi Minh City  
+&emsp;**Time:** Friday, October 3, 2025 (14:00 PM - 16:30 PM)
 
-&emsp;**Role:** Attendee  
+&emsp;**Location:** AWS Vietnam Office, Bitexco Financial Tower, 2 Hai Trieu St., Ben Nghe Ward, District 1, Ho Chi Minh 
 
-&emsp;**Description:** Workshop on new trends in AI-orchestrated software development, introducing the AI-Driven Development Lifecycle (AI-DLC) model and demonstrating Amazon Q Developer and Kiro IDE Extension tools.
+&emsp;**Role in Event:** AttendeeCity
 
+### [Event 2](4.2-Event2/)
 
+&emsp;**Event Name:** AWS Cloud Mastery Series #1: AI/ML/GenAI on AWS
 
----
+&emsp;**Time:** Saturday, November 15, 2025 (8:30 AM – 12:00 PM)
 
-### [Event 2](4.2-Event2/)  
-&emsp;**Event Name:** AI/ML/GenAI on AWS Workshop 
+&emsp;**Location:** AWS Vietnam Office, Bitexco Financial Tower, 2 Hai Trieu St., Ben Nghe Ward, District 1, Ho Chi Minh City
 
-&emsp;**Date & Time:** Saturday, November 15, 2025, 8:30 AM – 12:00 PM 
+&emsp;**Role in Event:** Attendee
 
-&emsp;**Location:** 26th Floor, Bitexco Tower, 02 Hai Trieu Street, Saigon Ward, Ho Chi Minh City  
+### [Event 3](4.3-Event3/)
 
-&emsp;**Role:** Attendee  
+&emsp;**Event Name:** AWS Cloud Mastery Series #2: DevOps on AWS
 
-&emsp;**Description:** Hands-on workshop covering Amazon SageMaker for traditional ML workflows and Amazon Bedrock for generative AI applications, including RAG architecture, prompt engineering, and Bedrock Agents.
+&emsp;**Time:** Monday, November 17, 2025 (8:30 AM – 5:00 PM)
 
+&emsp;**Location:** AWS Vietnam Office, Bitexco Financial Tower, 2 Hai Trieu St., Ben Nghe Ward, District 1, Ho Chi Minh City
 
+&emsp;**Role in Event:** Attendee
 
----
+### [Event 4](4.4-Event4/)
 
-### [Event 3](4.3-Event3/)  
-&emsp;**Event Name:** DevOps on AWS Workshop 
+&emsp;**Event Name:** AWS Cloud Mastery Series #3: Following the AWS Well-Architected Security Pillar
 
-&emsp;**Date & Time:** Monday, November 17, 2025, 8:30 AM – 5:00 PM 
+&emsp;**Time:** Saturday, November 29, 2025 (8:30 AM – 12:00 PM)
 
-&emsp;**Location:** 26th Floor, Bitexco Tower, 02 Hai Trieu Street, Saigon Ward, Ho Chi Minh City  
+&emsp;**Location:** AWS Vietnam Office, Bitexco Financial Tower, 2 Hai Trieu St., Ben Nghe Ward, District 1, Ho Chi Minh City
 
-&emsp;**Role:** Attendee  
-
-&emsp;**Description:** Comprehensive full-day workshop covering AWS DevOps services including CI/CD pipelines with CodePipeline/CodeBuild/CodeDeploy, Infrastructure as Code with CloudFormation and CDK, container services (ECS, EKS, App Runner), and monitoring & observability with CloudWatch and X-Ray.
-
-
----
-
-### [Event 4](4.4-Event4/)  
-&emsp;**Event Name:** AWS Well-Architected Security Pillar Workshop 
-
-&emsp;**Date & Time:**  Saturday, November 29, 2025, 8:30 AM – 12:00 PM 
-
-&emsp;**Location:** 26th Floor, Bitexco Tower, 02 Hai Trieu Street, Saigon Ward, Ho Chi Minh City  
-
-&emsp;**Role:** Attendee  
-
-&emsp;**Description:** Morning workshop providing a comprehensive deep-dive into the AWS Well-Architected Security Pillar, covering all five security domains: Identity & Access Management, Detection, Infrastructure Protection, Data Protection, and Incident Response.
+&emsp;**Role in Event:** Attendee

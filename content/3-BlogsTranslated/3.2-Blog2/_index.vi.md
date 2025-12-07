@@ -5,122 +5,147 @@ chapter: false
 pre: " <b> 3.2. </b> "
 ---
 
-{{% notice warning %}}
-⚠️ **Lưu ý:** Các thông tin dưới đây chỉ nhằm mục đích tham khảo, vui lòng **không sao chép nguyên văn** cho bài báo cáo của bạn kể cả warning này.
-{{% /notice %}}
+# Cách CommBank xây dựng Nền tảng Giao dịch CommSec với Tính Sẵn sàng Cao và Khả năng Phục hồi Hoạt động
 
-# Bắt đầu với healthcare data lakes: Sử dụng microservices
+CommSec — nhà môi giới trực tuyến hàng đầu của Úc và là công ty con của Commonwealth Bank of Australia (CommBank) — giúp hàng triệu khách hàng gia tăng tài sản bằng cách cung cấp nền tảng đầu tư dễ sử dụng, dễ tiếp cận và chi phí hợp lý cho cả thị trường Úc và quốc tế.
 
-Các data lake có thể giúp các bệnh viện và cơ sở y tế chuyển dữ liệu thành những thông tin chi tiết về doanh nghiệp và duy trì hoạt động kinh doanh liên tục, đồng thời bảo vệ quyền riêng tư của bệnh nhân. **Data lake** là một kho lưu trữ tập trung, được quản lý và bảo mật để lưu trữ tất cả dữ liệu của bạn, cả ở dạng ban đầu và đã xử lý để phân tích. data lake cho phép bạn chia nhỏ các kho chứa dữ liệu và kết hợp các loại phân tích khác nhau để có được thông tin chi tiết và đưa ra các quyết định kinh doanh tốt hơn.
+CommSec cung cấp các dịch vụ quan trọng như nghiên cứu thị trường, quản lý danh mục và thực hiện giao dịch. Vì khách hàng mong đợi hệ thống hoạt động 24/7, nền tảng cần duy trì độ tin cậy cực cao. Là tổ chức chịu sự quản lý của ASIC, CommSec cũng phải đảm bảo chủ quyền dữ liệu và khả năng phục hồi của nền tảng để bảo vệ tính toàn vẹn của thị trường tài chính Úc.
 
-Bài đăng trên blog này là một phần của loạt bài lớn hơn về việc bắt đầu cài đặt data lake dành cho lĩnh vực y tế. Trong bài đăng blog cuối cùng của tôi trong loạt bài, *“Bắt đầu với data lake dành cho lĩnh vực y tế: Đào sâu vào Amazon Cognito”*, tôi tập trung vào các chi tiết cụ thể của việc sử dụng Amazon Cognito và Attribute Based Access Control (ABAC) để xác thực và ủy quyền người dùng trong giải pháp data lake y tế. Trong blog này, tôi trình bày chi tiết cách giải pháp đã phát triển ở cấp độ cơ bản, bao gồm các quyết định thiết kế mà tôi đã đưa ra và các tính năng bổ sung được sử dụng. Bạn có thể truy cập các code samples cho giải pháp tại Git repo này để tham khảo.
+Bài viết này mô tả cách CommSec sử dụng các dịch vụ AWS để xây dựng nền tảng giao dịch có tính sẵn sàng cao, hiệu suất mạnh mẽ, đồng thời đáp ứng yêu cầu tuân thủ nghiêm ngặt và mang đến trải nghiệm người dùng vượt trội.
 
 ---
 
-## Hướng dẫn kiến trúc
+## Thách thức khi vận hành môi trường đa đám mây
 
-Thay đổi chính kể từ lần trình bày cuối cùng của kiến trúc tổng thể là việc tách dịch vụ đơn lẻ thành một tập hợp các dịch vụ nhỏ để cải thiện khả năng bảo trì và tính linh hoạt. Việc tích hợp một lượng lớn dữ liệu y tế khác nhau thường yêu cầu các trình kết nối chuyên biệt cho từng định dạng; bằng cách giữ chúng được đóng gói riêng biệt với microservices, chúng ta có thể thêm, xóa và sửa đổi từng trình kết nối mà không ảnh hưởng đến những kết nối khác. Các microservices được kết nối rời thông qua tin nhắn publish/subscribe tập trung trong cái mà tôi gọi là “pub/sub hub”.
+CommSec là khối lượng công việc quan trọng đầu tiên trong CommBank chuyển từ trung tâm dữ liệu tại chỗ lên đám mây công cộng.
 
-Giải pháp này đại diện cho những gì tôi sẽ coi là một lần lặp nước rút hợp lý khác từ last post của tôi. Phạm vi vẫn được giới hạn trong việc nhập và phân tích cú pháp đơn giản của các **HL7v2 messages** được định dạng theo **Quy tắc mã hóa 7 (ER7)** thông qua giao diện REST.
+- **2015**: di chuyển tầng web + mobile  
+- **2019**: di chuyển tầng ứng dụng  
 
-**Kiến trúc giải pháp bây giờ như sau:**
+Ban đầu, họ áp dụng **kiến trúc đa đám mây chủ động–chủ động (active–active)** giữa AWS và một nhà cung cấp khác để tăng độ tin cậy.
 
-> *Hình 1. Kiến trúc tổng thể; những ô màu thể hiện những dịch vụ riêng biệt.*
+Tuy nhiên, mô hình đa đám mây tạo ra nhiều thách thức:
 
----
-
-Mặc dù thuật ngữ *microservices* có một số sự mơ hồ cố hữu, một số đặc điểm là chung:  
-- Chúng nhỏ, tự chủ, kết hợp rời rạc  
-- Có thể tái sử dụng, giao tiếp thông qua giao diện được xác định rõ  
-- Chuyên biệt để giải quyết một việc  
-- Thường được triển khai trong **event-driven architecture**
-
-Khi xác định vị trí tạo ranh giới giữa các microservices, cần cân nhắc:  
-- **Nội tại**: công nghệ được sử dụng, hiệu suất, độ tin cậy, khả năng mở rộng  
-- **Bên ngoài**: chức năng phụ thuộc, tần suất thay đổi, khả năng tái sử dụng  
-- **Con người**: quyền sở hữu nhóm, quản lý *cognitive load*
+- Hai pipeline triển khai  
+- Hai mô hình vận hành khác nhau  
+- Cơ chế failover tự xây dựng, phụ thuộc hệ thống giám sát ngoài  
+- Tăng chi phí vận hành  
+- Tốc độ phát triển chậm  
+- Hạn chế sử dụng các dịch vụ cloud-native  
+- Khó đổi mới do phải giữ tính tương đồng giữa hai môi trường  
 
 ---
 
-## Lựa chọn công nghệ và phạm vi giao tiếp
+## Tổng quan giải pháp
 
-| Phạm vi giao tiếp                        | Các công nghệ / mô hình cần xem xét                                                        |
-| ---------------------------------------- | ------------------------------------------------------------------------------------------ |
-| Trong một microservice                   | Amazon Simple Queue Service (Amazon SQS), AWS Step Functions                               |
-| Giữa các microservices trong một dịch vụ | AWS CloudFormation cross-stack references, Amazon Simple Notification Service (Amazon SNS) |
-| Giữa các dịch vụ                         | Amazon EventBridge, AWS Cloud Map, Amazon API Gateway                                      |
+Đầu **2025**, CommSec tái kiến trúc toàn bộ tầng ứng dụng, web và mobile để chạy **hoàn toàn trên AWS**, sau khi AWS được chọn làm nhà cung cấp đám mây chính của CommBank.
 
----
+Họ tạo ra một ranh giới cô lập lỗi mới:
 
-## The pub/sub hub
+### **➡ Availability Zone (AZ) trở thành domain lỗi chính**
 
-Việc sử dụng kiến trúc **hub-and-spoke** (hay message broker) hoạt động tốt với một số lượng nhỏ các microservices liên quan chặt chẽ.  
-- Mỗi microservice chỉ phụ thuộc vào *hub*  
-- Kết nối giữa các microservice chỉ giới hạn ở nội dung của message được xuất  
-- Giảm số lượng synchronous calls vì pub/sub là *push* không đồng bộ một chiều
+Với **Amazon Application Recovery Controller (ARC) – zonal shift**, CommSec có thể:
 
-Nhược điểm: cần **phối hợp và giám sát** để tránh microservice xử lý nhầm message.
+- Chuyển tải (fail traffic) khỏi AZ bị lỗi  
+- Xử lý các lỗi hạ tầng hoặc lỗi “xám” (gray failures)  
+- Giữ được sự cô lập vật lý + logic giữa các AZ  
 
----
+ARC được bật trên load balancer để chuyển hướng traffic khỏi AZ gặp sự cố **mà không cần phụ thuộc control plane**.
 
-## Core microservice
+Điều này giúp họ đạt được khả năng phục hồi tương tự mô hình đa đám mây trước kia — **nhưng đơn giản hơn rất nhiều**.
 
-Cung cấp dữ liệu nền tảng và lớp truyền thông, gồm:  
-- **Amazon S3** bucket cho dữ liệu  
-- **Amazon DynamoDB** cho danh mục dữ liệu  
-- **AWS Lambda** để ghi message vào data lake và danh mục  
-- **Amazon SNS** topic làm *hub*  
-- **Amazon S3** bucket cho artifacts như mã Lambda
+### Lợi ích chính:
 
-> Chỉ cho phép truy cập ghi gián tiếp vào data lake qua hàm Lambda → đảm bảo nhất quán.
+- **Failover tự động** qua ARC zonal shift  
+- **Playbook được chuẩn hóa và kiểm thử thường xuyên**  
+- Tốc độ triển khai + cập nhật hệ điều hành **nhanh gấp 2 lần**  
+- Chạy trên 3 AZ giúp **giảm 25% capacity cơ bản** so với mô hình cũ 4 ngăn đa đám mây  
+- Giảm chi phí vận hành  
 
 ---
 
-## Front door microservice
+## Các cải tiến về khả năng phục hồi
 
-- Cung cấp API Gateway để tương tác REST bên ngoài  
-- Xác thực & ủy quyền dựa trên **OIDC** thông qua **Amazon Cognito**  
-- Cơ chế *deduplication* tự quản lý bằng DynamoDB thay vì SNS FIFO vì:
-  1. SNS deduplication TTL chỉ 5 phút
-  2. SNS FIFO yêu cầu SQS FIFO
-  3. Chủ động báo cho sender biết message là bản sao
+### **1. Scaling có độ bền cao**
+
+Vì ứng dụng scale-in/out nhiều lần mỗi ngày:
+
+- Logic bootstrap khi scale-out được thiết kế **tự chứa**  
+- Binary ứng dụng lưu trong **Amazon S3 cùng tài khoản AWS**  
+→ Tránh phụ thuộc bên ngoài khi scaling  
+
+### **2. Xử lý mức tăng đột biến lưu lượng**
+
+Lưu lượng của CommSec **tăng gấp 3 lần chỉ trong 3 phút** (9:59–10:02 AM, lúc thị trường mở cửa).
+
+Giải pháp:
+
+- Sử dụng **Load Balancer Capacity Unit (LCU) reservations**  
+→ Dự trữ năng lực ALB trước  
+→ Tránh phụ thuộc scaling phản ứng  
+
+### **3. Health check cho lỗi cứng (hard failures)**
+
+- ALB tự động loại instance không khỏe  
+- Tạo cảnh báo để đội vận hành xử lý  
+
+### **4. Cải thiện kết nối với sở giao dịch**
+
+- Thiết lập liên kết **AWS Direct Connect** với Australian Liquidity Centre  
+→ Cải thiện độ tin cậy cho hoạt động thị trường (ASX & CBOE)  
 
 ---
 
-## Staging ER7 microservice
+## ARC Zonal Shift để giảm thiểu sự cố
 
-- Lambda “trigger” đăng ký với pub/sub hub, lọc message theo attribute  
-- Step Functions Express Workflow để chuyển ER7 → JSON  
-- Hai Lambda:
-  1. Sửa format ER7 (newline, carriage return)
-  2. Parsing logic  
-- Kết quả hoặc lỗi được đẩy lại vào pub/sub hub
+Ra mắt năm 2023, ARC zonal shift cho phép:
+
+- Chuyển tải khỏi AZ đang gặp sự cố  
+- Giảm ảnh hưởng từ outage hoặc lỗi một phần  
+- Hỗ trợ:
+  - ALB / NLB  
+  - EC2 Auto Scaling  
+  - Amazon EKS  
+
+### Cách hoạt động:
+
+Khi kích hoạt zonal shift:
+
+1. **ALB loại bỏ IP node trong AZ bị lỗi khỏi DNS**  
+   → Request mới không đi vào node đó  
+2. **Các node ALB còn lại dừng gửi traffic** đến target trong AZ bị lỗi  
+   → Ngăn traffic đi vào workload không khỏe  
+
+Load balancing chéo AZ vẫn hoạt động ở các AZ khỏe.
+
+Khi sự cố được khắc phục:
+
+- Hủy zonal shift  
+- Traffic phân phối lại như bình thường  
 
 ---
 
-## Tính năng mới trong giải pháp
+## Lợi ích của ARC Zonal Shift
 
-### 1. AWS CloudFormation cross-stack references
-Ví dụ *outputs* trong core microservice:
-```yaml
-Outputs:
-  Bucket:
-    Value: !Ref Bucket
-    Export:
-      Name: !Sub ${AWS::StackName}-Bucket
-  ArtifactBucket:
-    Value: !Ref ArtifactBucket
-    Export:
-      Name: !Sub ${AWS::StackName}-ArtifactBucket
-  Topic:
-    Value: !Ref Topic
-    Export:
-      Name: !Sub ${AWS::StackName}-Topic
-  Catalog:
-    Value: !Ref Catalog
-    Export:
-      Name: !Sub ${AWS::StackName}-Catalog
-  CatalogArn:
-    Value: !GetAtt Catalog.Arn
-    Export:
-      Name: !Sub ${AWS::StackName}-CatalogArn
+- Tăng SLA khả dụng  
+- Loại bỏ failover thủ công nhiều bước  
+- Giảm thất thoát doanh thu khi xảy ra lỗi  
+- Cho phép kiểm thử khả năng phục hồi thường xuyên, rủi ro thấp  
+- Tăng niềm tin nội bộ về khả năng chịu lỗi của hệ thống  
+
+> “ARC zonal shift là cách hiệu quả nhất để CommSec sử dụng dịch vụ AWS mà vẫn đáp ứng yêu cầu về tính phục hồi… Hy vọng chúng tôi sẽ không bao giờ cần dùng đến nó, nhưng việc kiểm thử thường xuyên giúp đảm bảo rằng nó sẽ hoạt động khi cần.”  
+> — **Henry Zhao, Staff Software Engineer, CommBank**
+
+---
+
+## Kết luận
+
+Bằng cách hợp nhất lên AWS và sử dụng các mô hình kiến trúc Multi-AZ hiện đại, nền tảng giao dịch CommSec hiện cung cấp:
+
+- Độ tin cậy vượt trội  
+- Tuân thủ quy định mạnh mẽ  
+- Trải nghiệm khách hàng tốt hơn  
+- Kiến trúc đơn giản hóa  
+- Giảm chi phí vận hành  
+
+ARC zonal shift, thiết kế load balancer tối ưu, kết nối Direct Connect và các playbook vận hành vững chắc đã tạo nên một **nền tảng giao dịch có tính sẵn sàng cao và khả năng phục hồi mạnh mẽ**, phục vụ hàng triệu nhà đầu tư tại Úc.

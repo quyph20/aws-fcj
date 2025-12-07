@@ -1,125 +1,58 @@
 ---
 title: "Event 2"
-weight: 1
+weight: 3
 chapter: false
 pre: " <b> 4.2. </b> "
 ---
 
-{{% notice warning %}}
-⚠️ **Note:** The information below is for reference purposes only. Please **do not copy it verbatim** into your report, including this warning.
-{{% /notice %}}
 
-# Summary Report: “GenAI-powered App-DB Modernization workshop”
+# “AI/ML/GenAI on AWS”
+
+### Time and Theme
+
+- **Time:** Saturday, November 15, 2025 (8:30 AM – 12:00 PM)
+- **Theme:** AI/ML/GenAI on AWS
 
 ### Event Objectives
 
-- Share best practices in modern application design
-- Introduce Domain-Driven Design (DDD) and event-driven architecture
-- Provide guidance on selecting the right compute services
-- Present AI tools to support the development lifecycle
+- Provide an overview of AWS AI/ML services.
+- Detail **Amazon SageMaker** – the end-to-end ML platform.
+- Deep dive into **Generative AI (GenAI)** and Foundation Models via **Amazon Bedrock**.
+- Guide attendees through **Prompt Engineering** techniques and the **Retrieval-Augmented Generation (RAG)** architecture.
 
-### Speakers
+### List of Speakers
 
-- **Jignesh Shah** – Director, Open Source Databases
-- **Erica Liu** – Sr. GTM Specialist, AppMod
-- **Fabrianne Effendi** – Assc. Specialist SA, Serverless Amazon Web Services
+- Detailed speaker information is not available in the original data, assumed to be AWS Vietnam Solution Architects.
 
-### Key Highlights
+### Highlights of the Content
 
-#### Identifying the drawbacks of legacy application architecture
+#### 1. AWS AI/ML Services Overview
 
-- Long product release cycles → Lost revenue/missed opportunities  
-- Inefficient operations → Reduced productivity, higher costs  
-- Non-compliance with security regulations → Security breaches, loss of reputation  
+- **Amazon SageMaker:** Covered the entire Machine Learning (ML) lifecycle, including data preparation, model training, tuning, deployment, and integrated MLOps.
+- **Live Demo:** Hands-on demonstration with **SageMaker Studio**.
 
-#### Transitioning to modern application architecture – Microservices
+#### 2. Generative AI with Amazon Bedrock
 
-Migrating to a modular system — each function is an **independent service** communicating via **events**, built on three core pillars:
-
-- **Queue Management**: Handle asynchronous tasks  
-- **Caching Strategy**: Optimize performance  
-- **Message Handling**: Flexible inter-service communication  
-
-#### Domain-Driven Design (DDD)
-
-- **Four-step method**: Identify domain events → arrange timeline → identify actors → define bounded contexts  
-- **Bookstore case study**: Demonstrates real-world DDD application  
-- **Context mapping**: 7 patterns for integrating bounded contexts  
-
-#### Event-Driven Architecture
-
-- **3 integration patterns**: Publish/Subscribe, Point-to-point, Streaming  
-- **Benefits**: Loose coupling, scalability, resilience  
-- **Sync vs async comparison**: Understanding the trade-offs  
-
-#### Compute Evolution
-
-- **Shared Responsibility Model**: EC2 → ECS → Fargate → Lambda  
-- **Serverless benefits**: No server management, auto-scaling, pay-for-value  
-- **Functions vs Containers**: Criteria for appropriate choice  
-
-#### Amazon Q Developer
-
-- **SDLC automation**: From planning to maintenance  
-- **Code transformation**: Java upgrade, .NET modernization  
-- **AWS Transform agents**: VMware, Mainframe, .NET migration  
+- **Foundation Models:** Comparison and guidance on choosing between models like **Claude, Llama, Titan**.
+- **Prompt Engineering:** Advanced techniques such as **Chain-of-Thought reasoning** and **Few-shot learning**.
+- **Retrieval-Augmented Generation (RAG):** Architecture and integration with a **Knowledge Base** to enhance accuracy and context for GenAI.
+- **Bedrock Agents & Guardrails:** Building multi-step workflows and **Guardrails** (Content moderation layers) to ensure safety.
 
 ### Key Takeaways
 
-#### Design Mindset
+#### GenAI and ML Skills
 
-- **Business-first approach**: Always start from the business domain, not the technology  
-- **Ubiquitous language**: Importance of a shared vocabulary between business and tech teams  
-- **Bounded contexts**: Identifying and managing complexity in large systems  
+- **End-to-end ML Deployment:** Mastered the basic steps for building and deploying ML models on SageMaker effectively.
+- **Bedrock Proficiency:** Clearly understood the components of Bedrock and the capabilities of different Foundation Models.
+- **RAG Technique:** Grasping the **RAG** architecture as a critical factor for integrating GenAI into real-world enterprise applications using proprietary data.
 
-#### Technical Architecture
-
-- **Event storming technique**: Practical method for modeling business processes  
-- Use **event-driven communication** instead of synchronous calls  
-- **Integration patterns**: When to use sync, async, pub/sub, streaming  
-- **Compute spectrum**: Criteria for choosing between VM, containers, and serverless  
-
-#### Modernization Strategy
-
-- **Phased approach**: No rushing — follow a clear roadmap  
-- **7Rs framework**: Multiple modernization paths depending on the application  
-- **ROI measurement**: Cost reduction + business agility  
-
-### Applying to Work
-
-- **Apply DDD** to current projects: Event storming sessions with business teams  
-- **Refactor microservices**: Use bounded contexts to define service boundaries  
-- **Implement event-driven patterns**: Replace some sync calls with async messaging  
-- **Adopt serverless**: Pilot AWS Lambda for suitable use cases  
-- **Try Amazon Q Developer**: Integrate into the dev workflow to boost productivity  
+### Application to Work
+- **Building GenAI Proof-of-Concepts (PoC):** Use Amazon Bedrock to quickly prototype GenAI use cases (e.g., document summarization, internal knowledge-based chatbot) with the RAG technique.
+- **Prompt Optimization:** Apply the learned Prompt Engineering techniques to improve the quality of responses from large language models.
 
 ### Event Experience
 
-Attending the **“GenAI-powered App-DB Modernization”** workshop was extremely valuable, giving me a comprehensive view of modernizing applications and databases using advanced methods and tools. Key experiences included:
+- **In-depth Practice:** The **Live Demos** on SageMaker and Bedrock were highly valuable, providing a practical view of service deployment.
+- **Focus on Detail:** The event delved into technical aspects like model selection and input optimization (Prompting), giving me a more solid knowledge base compared to purely introductory events.
 
-#### Learning from highly skilled speakers
-- Experts from AWS and major tech organizations shared **best practices** in modern application design.  
-- Through real-world case studies, I gained a deeper understanding of applying **DDD** and **Event-Driven Architecture** to large projects.  
-
-#### Hands-on technical exposure
-- Participating in **event storming** sessions helped me visualize how to **model business processes** into domain events.  
-- Learned how to **split microservices** and define **bounded contexts** to manage large-system complexity.  
-- Understood trade-offs between **synchronous and asynchronous communication** and integration patterns like **pub/sub, point-to-point, streaming**.  
-
-#### Leveraging modern tools
-- Explored **Amazon Q Developer**, an AI tool for SDLC support from planning to maintenance.  
-- Learned to **automate code transformation** and pilot serverless with **AWS Lambda** to improve productivity.  
-
-#### Networking and discussions
-- The workshop offered opportunities to exchange ideas with experts, peers, and business teams, enhancing the **ubiquitous language** between business and tech.  
-- Real-world examples reinforced the importance of the **business-first approach** rather than focusing solely on technology.  
-
-#### Lessons learned
-- Applying DDD and event-driven patterns reduces **coupling** while improving **scalability** and **resilience**.  
-- Modernization requires a **phased approach** with **ROI measurement**; rushing the process can be risky.  
-- AI tools like Amazon Q Developer can significantly **boost productivity** when integrated into the current workflow.  
-
-#### Some event photos
-*Add your event photos here*  
-
-> Overall, the event not only provided technical knowledge but also helped me reshape my thinking about application design, system modernization, and cross-team collaboration.
+> This event provided a strong foundation for me to start working on Machine Learning and Generative AI projects on AWS.
